@@ -1,0 +1,94 @@
+Reading file...
+[FAIL] failed to parse line: Бухгалтерия;Соня;
+[FAIL] failed to parse line: Бухгалтерия;Вася;-321.123
+Successfully read info:
+Department: БУХГАЛТЕРИЯ
+Average salary of department: 222.222
+Employee: Коля, 111.111
+Employee: Эвелина, 222.222
+Employee: Кирилл, 333.333
+
+Department: КАДРЫ
+Average salary of department: 123.123
+Employee: Ира, 123.123
+Employee: Юля, 123.123
+Employee: Петр, 123.123
+
+Department: IT
+Average salary of department: 321.321
+Employee: John, 321.321
+Employee: Tim, 321.321
+Employee: Ken, 321.321
+
+________________________________________________________
+Found combination 1
+Combination of БУХГАЛТЕРИЯ and КАДРЫ
+Staff from БУХГАЛТЕРИЯ:
+Employee: Коля, 111.111
+Employee: Эвелина, 222.222
+Staff from КАДРЫ:
+Employee: Ира, 123.123
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 228.228
+КАДРЫ <original average salary> - <new average salary>: 123.123 - 144.89475
+
+Found combination 2
+Combination of БУХГАЛТЕРИЯ and КАДРЫ
+Staff from БУХГАЛТЕРИЯ:
+Employee: Коля, 111.111
+Employee: Эвелина, 222.222
+Staff from КАДРЫ:
+Employee: Юля, 123.123
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 228.228
+КАДРЫ <original average salary> - <new average salary>: 123.123 - 144.89475
+
+Found combination 3
+Combination of БУХГАЛТЕРИЯ and КАДРЫ
+Staff from БУХГАЛТЕРИЯ:
+Employee: Коля, 111.111
+Employee: Эвелина, 222.222
+Staff from КАДРЫ:
+Employee: Петр, 123.123
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 228.228
+КАДРЫ <original average salary> - <new average salary>: 123.123 - 144.89475
+
+Found combination 4
+Combination of БУХГАЛТЕРИЯ and IT
+Staff from БУХГАЛТЕРИЯ:
+Employee: Кирилл, 333.333
+Staff from IT:
+Employee: John, 321.321
+Employee: Tim, 321.321
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 243.99375
+IT <original average salary> - <new average salary>: 321.321 - 327.327
+
+Found combination 5
+Combination of БУХГАЛТЕРИЯ and IT
+Staff from БУХГАЛТЕРИЯ:
+Employee: Кирилл, 333.333
+Staff from IT:
+Employee: John, 321.321
+Employee: Ken, 321.321
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 243.99375
+IT <original average salary> - <new average salary>: 321.321 - 327.327
+
+Found combination 6
+Combination of БУХГАЛТЕРИЯ and IT
+Staff from БУХГАЛТЕРИЯ:
+Employee: Кирилл, 333.333
+Staff from IT:
+Employee: Tim, 321.321
+Employee: Ken, 321.321
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 243.99375
+IT <original average salary> - <new average salary>: 321.321 - 327.327
+
+Found combination 7
+Combination of БУХГАЛТЕРИЯ and IT
+Staff from БУХГАЛТЕРИЯ:
+Employee: Кирилл, 333.333
+Staff from IT:
+Employee: John, 321.321
+Employee: Tim, 321.321
+Employee: Ken, 321.321
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 259.4592
+IT <original average salary> - <new average salary>: 321.321 - 333.333
+

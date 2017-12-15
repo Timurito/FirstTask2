@@ -1,0 +1,41 @@
+Reading file...
+Successfully read info:
+Department: DEV
+Average salary of department: 700
+Employee: Иванов И.И., 1000
+Employee: Сидоров И.И., 1000
+Employee: Путин И.И., 100
+
+Department: TEST
+Average salary of department: 70
+Employee: Петров И.И., 80
+Employee: Блинов И.И., 120
+Employee: Птрв И.И., 10
+
+________________________________________________________
+Found combination 1
+Combination of DEV and TEST
+Staff from DEV:
+Employee: Путин И.И., 100
+Staff from TEST:
+DEV <original average salary> - <new average salary>: 700 - 1000
+TEST <original average salary> - <new average salary>: 70 - 78
+
+Found combination 2
+Combination of DEV and TEST
+Staff from DEV:
+Employee: Иванов И.И., 1000
+Employee: Путин И.И., 100
+Staff from TEST:
+DEV <original average salary> - <new average salary>: 700 - 1000
+TEST <original average salary> - <new average salary>: 70 - 262
+
+Found combination 3
+Combination of DEV and TEST
+Staff from DEV:
+Employee: Сидоров И.И., 1000
+Employee: Путин И.И., 100
+Staff from TEST:
+DEV <original average salary> - <new average salary>: 700 - 1000
+TEST <original average salary> - <new average salary>: 70 - 262
+
