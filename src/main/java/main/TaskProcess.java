@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 public class TaskProcess {
+    private static final int DEPARTMENT_NAME = 0;
+    private static final int EMPLOYEE_FULL_NAME = 1;
+    private static final int EMPLOYEE_SALARY = 2;
     private static final int STRING_PARTS_NUM = 3;
     private int totalFoundCombs;
     private BufferedWriterWrap bw;
@@ -49,7 +52,7 @@ public class TaskProcess {
                         (newEmployee = parseEmployee(stringParts)) == null) {
                     bw.write("[FAIL] failed to parse line: " + temp + "\n");
                 } else {
-                    addNewEmployeeToDepartment(newEmployee, stringParts[0]);
+                    addNewEmployeeToDepartment(newEmployee, stringParts[DEPARTMENT_NAME]);
                 }
             }
             return true;
@@ -70,8 +73,8 @@ public class TaskProcess {
     }
 
     private Employee parseEmployee(String[] stringParts) {
-        BigDecimal salary = parseSalary(stringParts[2]);
-        return salary != null ? new Employee(stringParts[1], salary) : null;
+        BigDecimal salary = parseSalary(stringParts[EMPLOYEE_SALARY]);
+        return salary != null ? new Employee(stringParts[EMPLOYEE_FULL_NAME], salary) : null;
     }
 
     private BigDecimal parseSalary(String str) {
