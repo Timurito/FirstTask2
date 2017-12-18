@@ -144,12 +144,12 @@ public class TaskProcess {
             for (Employee e : dep1NewStaff) {
                 dep1NewAvgSalary = dep1NewAvgSalary.add(e.getSalary());
             }
-            dep1NewAvgSalary = dep1NewAvgSalary.divide(new BigDecimal(dep1NewStaff.size()), RoundingMode.HALF_EVEN);
+            dep1NewAvgSalary = dep1NewAvgSalary.divide(new BigDecimal(dep1NewStaff.size()), 5, RoundingMode.HALF_EVEN);
             BigDecimal dep2NewAvgSalary = new BigDecimal(0);
             for (Employee e : dep2NewStaff) {
                 dep2NewAvgSalary = dep2NewAvgSalary.add(e.getSalary());
             }
-            dep2NewAvgSalary = dep2NewAvgSalary.divide(new BigDecimal(dep2NewStaff.size()), RoundingMode.HALF_EVEN);
+            dep2NewAvgSalary = dep2NewAvgSalary.divide(new BigDecimal(dep2NewStaff.size()), 5, RoundingMode.HALF_EVEN);
             BigDecimal dep1OrigAvgSalary = department1.getAvgSalary();
             BigDecimal dep2OrigAvgSalary = department2.getAvgSalary();
             if (dep1OrigAvgSalary.compareTo(dep1NewAvgSalary) == -1 && dep2OrigAvgSalary.compareTo(dep2NewAvgSalary) == -1) {
