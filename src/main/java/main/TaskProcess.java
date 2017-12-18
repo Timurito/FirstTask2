@@ -1,6 +1,5 @@
 package main;
 
-import entities.Combination;
 import entities.Department;
 import entities.Employee;
 
@@ -11,67 +10,63 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TaskProcess {
-    private BufferedWriter bw;
+    private static final int STRING_PARTS_NUM = 3;
     private int totalFoundCombs;
+    private BufferedWriterWrap bw;
+    private List<Department> departments = new ArrayList<>();
+    private Map<String, Department> departmentNames = new HashMap<>();
 
-    public TaskProcess(String[] args) {
-        String inputFilename = args[0];
-        String outputFilename = args[1];
-        boolean appendToOutputFile = args[2].equalsIgnoreCase("true");
-        try {
-            bw = new BufferedWriter(new FileWriter(outputFilename, appendToOutputFile));
-            bw.write("Reading file...\n");
-            List<Department> list = readFile(inputFilename);
-            bw.write("Successfully read info:\n");
-            for (Department d : list) {
-                bw.write(d.toString());
-            }
-            bw.write("________________________________________________________\n");
-            processDepartments(list);
-        } catch (IOException e) {
-            // log here?
-        } finally {
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException e) {
-                    // log here?
-                }
-            }
+    public TaskProcess(String inputFilename, String outputFilename) {
+        bw = new BufferedWriterWrap(outputFilename);
+        if (bw == null) {
+            return;
         }
+        bw.write("Reading file...\n");
+        if (!readFile(inputFilename)) {
+            return;
+        }
+        bw.write("Successfully read info:\n");
+        for (Department d : departments) {
+            bw.write(d.toString());
+        }
+        bw.write("________________________________________________________\n");
+        processDepartments();
+        bw.close();
     }
 
-    private List<Department> readFile(String filename) {
-        List<Department> res = new ArrayList<>();
+    private boolean readFile(String filename) {
         try (BufferedReader r = new BufferedReader(new FileReader((filename)))) {
             String temp;
             while ((temp = r.readLine()) != null) {
                 String[] stringParts = temp.split(";");
                 Employee newEmployee;
-                if (stringParts.length != 3 || (newEmployee = parseEmployee(stringParts)) == null) {
+                if (stringParts.length != STRING_PARTS_NUM ||
+                        (newEmployee = parseEmployee(stringParts)) == null) {
                     bw.write("[FAIL] failed to parse line: " + temp + "\n");
                 } else {
-                    addNewEmployeeToDepartment(res, newEmployee, stringParts[0]);
+                    addNewEmployeeToDepartment(newEmployee, stringParts[0]);
                 }
             }
+            return true;
         } catch (IOException e) {
-            // log here?
+            System.out.println("[ERROR] IO error with input file operation.");
+            return false;
         }
-        return res;
     }
 
-    private void addNewEmployeeToDepartment(List<Department> res, Employee newEmployee, String departmentName) {
-        for (Department currDepartment : res) {
-            if (currDepartment.getName().equalsIgnoreCase(departmentName)) {
-                currDepartment.addEmployee(newEmployee);
-                return;
-            }
+    private void addNewEmployeeToDepartment(Employee newEmployee, String departmentName) {
+        if (departmentNames.containsKey(departmentName)) {
+            departmentNames.get(departmentName).addEmployee(newEmployee);
+        } else {
+            Department newDepartment = new Department(departmentName, newEmployee);
+            departments.add(newDepartment);
+            departmentNames.put(departmentName, newDepartment);
         }
-        res.add(new Department(departmentName, newEmployee));
     }
 
     private Employee parseEmployee(String[] stringParts) {
@@ -96,118 +91,136 @@ public class TaskProcess {
         return salary.signum() >= 0 ? salary : null;
     }
 
-    private void processDepartments(List<Department> departments) {
+    private void processDepartments() {
         for (int i = 0; i < departments.size(); i++) {
-            for (int j = i + 1; j < departments.size(); j++) {
-                compareDepartments(departments.get(i), departments.get(j));
+            for (int j = 0; j < departments.size(); j++) {
+                if (i != j) {
+                    new CalcCombination(departments.get(i), departments.get(j));
+                }
             }
         }
     }
 
-    private void compareDepartments(Department department1, Department department2) {
-        // loop by number of elements for combinations (i-combinations from department1)
-        for (int i = 0; i < department1.getStaff().size(); i++) {
-            List<int[]> dep1Combinations = getAllCombinations(department1.getStaff().size(), i);
-            // loop by combinations of department1
-            for (int[] q : dep1Combinations) {
-                // loop by number of elements for combinations (i-combinations from department2)
-                for (int j = 0; j < department2.getStaff().size(); j++) {
-                    List<int[]> dep2Combinations = getAllCombinations(department2.getStaff().size(), j);
-                    // loop by combinations of department2
-                    for (int[] k : dep2Combinations) {
-                        compareCombinations(department1, department2, q, k);
+    private class CalcCombination {
+        private Department department1;
+        private Department department2;
+
+        public CalcCombination(Department department1, Department department2) {
+            this.department1 = department1;
+            this.department2 = department2;
+            int[] data = new int[department1.getStaff().size()];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = i;
+            }
+
+            for (int i = 1; i < department1.getStaff().size(); i++) {
+                int[] temp = new int[i];
+                calculateCombination(data, temp, data.length, temp.length, 0, 0);
+            }
+        }
+
+        private void calculateCombination(int[] data, int[] temp, int n, int k, int tempIndex, int dataIndex) {
+            if (k == tempIndex) {
+                compareDepartments(temp);
+                return;
+            }
+            if (dataIndex >= n) {
+                return;
+            }
+            temp[tempIndex] = data[dataIndex];
+            calculateCombination(data, temp, n, k, tempIndex + 1, dataIndex + 1);
+            calculateCombination(data, temp, n, k, tempIndex, dataIndex + 1);
+        }
+
+        private void compareDepartments(int[] dep1Comb) {
+            List<Employee> dep1NewStaff = getEmployeesByIndexesExceptOf(department1, dep1Comb);
+            List<Employee> dep1StaffByIndexes = getEmployeesByIndexes(department1, dep1Comb);
+            List<Employee> dep2NewStaff = new ArrayList<>(dep1StaffByIndexes);
+            dep2NewStaff.addAll(department2.getStaff());
+            BigDecimal dep1NewAvgSalary = new BigDecimal(0);
+            for (Employee e : dep1NewStaff) {
+                dep1NewAvgSalary = dep1NewAvgSalary.add(e.getSalary());
+            }
+            dep1NewAvgSalary = dep1NewAvgSalary.divide(new BigDecimal(dep1NewStaff.size()), RoundingMode.HALF_EVEN);
+            BigDecimal dep2NewAvgSalary = new BigDecimal(0);
+            for (Employee e : dep2NewStaff) {
+                dep2NewAvgSalary = dep2NewAvgSalary.add(e.getSalary());
+            }
+            dep2NewAvgSalary = dep2NewAvgSalary.divide(new BigDecimal(dep2NewStaff.size()), RoundingMode.HALF_EVEN);
+            BigDecimal dep1OrigAvgSalary = department1.getAvgSalary();
+            BigDecimal dep2OrigAvgSalary = department2.getAvgSalary();
+            if (dep1OrigAvgSalary.compareTo(dep1NewAvgSalary) == -1 && dep2OrigAvgSalary.compareTo(dep2NewAvgSalary) == -1) {
+                totalFoundCombs++;
+                StringBuilder sb = new StringBuilder("Found combination ").append(totalFoundCombs).append("\n")
+                        .append("Combination of ").append(department1.getName()).append(" and ").append(department2.getName()).append("\n")
+                        .append("Staff from ").append(department1.getName()).append(":\n");
+                for (Employee e : dep1StaffByIndexes) {
+                    sb.append(e).append("\n");
+                }
+                sb.append(department1.getName()).append(" <original average salary> - <new average salary>: ")
+                        .append(dep1OrigAvgSalary).append(" - ").append(dep1NewAvgSalary).append("\n");
+                sb.append(department2.getName()).append(" <original average salary> - <new average salary>: ")
+                        .append(dep2OrigAvgSalary).append(" - ").append(dep2NewAvgSalary).append("\n\n");
+                bw.write(sb.toString());
+            }
+        }
+
+        private List<Employee> getEmployeesByIndexes(Department department, int[] indexes) {
+            List<Employee> resList = new ArrayList<>();
+            for (int i = 0; i < department.getStaff().size(); i++) {
+                for (int j : indexes) {
+                    if (i == j) {
+                        resList.add(department.getStaff().get(i));
+                        break;
                     }
                 }
             }
+            return resList;
         }
-    }
 
-    private List<int[]> getAllCombinations(int n, int k) {
-        List<int[]> combinations = new ArrayList<>();
-        int[] inputArr = new int[n];
-        for (int i = 0; i < n; i++) {
-            inputArr[i] = i;
-        }
-        getCombinations(combinations, inputArr, inputArr.length, k, 0, new int[k], 0);
-        return combinations;
-    }
 
-    // this method is unconscionably stolen from the Internet
-    private void getCombinations(List<int[]> resultList, int arr[], int n, int k, int index, int data[], int i) {
-        // Current combination is ready to be saved
-        if (index == k) {
-            resultList.add(Arrays.copyOf(data, data.length));
-            return;
-        }
-        // When no more elements are there to put in data[]
-        if (i >= n) {
-            return;
-        }
-        // current is included, put next at next location
-        data[index] = arr[i];
-        getCombinations(resultList, arr, n, k, index + 1, data, i + 1);
-        // current is excluded, replace it with next (Note that
-        // i+1 is passed, but index is not changed)
-        getCombinations(resultList, arr, n, k, index, data, i + 1);
-    }
-
-    private void compareCombinations(Department department1, Department department2, int[] dep1Comb, int[] dep2Comb) {
-        BigDecimal dep1OrigAvgSalary = department1.getAvgSalary();
-        BigDecimal dep2OrigAvgSalary = department2.getAvgSalary();
-        BigDecimal dep1CombAvgSalary = calcCombAvgSalary(department1, department2, dep1Comb, dep2Comb);
-        BigDecimal dep2CombAvgSalary = calcCombAvgSalary(department2, department1, dep2Comb, dep1Comb);
-
-        if (dep1OrigAvgSalary.compareTo(dep1CombAvgSalary) == -1 && dep2OrigAvgSalary.compareTo(dep2CombAvgSalary) == -1) {
-            totalFoundCombs++;
-            writeToFile("Found combination " + totalFoundCombs + "\n", new Combination(department1, department2,
-                    getEmployeesByIndexes(department1, dep1Comb), getEmployeesByIndexes(department2, dep2Comb),
-                    dep1CombAvgSalary, dep2CombAvgSalary).toString());
-        }
-    }
-
-    private BigDecimal calcCombAvgSalary(Department department1, Department department2, int[] dep1Comb, int[] dep2Comb) {
-        BigDecimal combAvgSalary = new BigDecimal(0);
-        List<Employee> newDeptComb = new ArrayList<>();
-        newDeptComb.addAll(getEmployeesByIndexesExceptOf(department1, dep1Comb));
-        newDeptComb.addAll(getEmployeesByIndexes(department2, dep2Comb));
-        for (Employee e : newDeptComb) {
-            combAvgSalary = combAvgSalary.add(e.getSalary());
-        }
-        return combAvgSalary.divide(new BigDecimal(department1.getStaff().size() - dep1Comb.length + dep2Comb.length), RoundingMode.HALF_EVEN);
-    }
-
-    private List<Employee> getEmployeesByIndexes(Department department, int[] indexes) {
-        List<Employee> resList = new ArrayList<>();
-        for (int i = 0; i < department.getStaff().size(); i++) {
-            for (int j : indexes) {
-                if (i == j) {
-                    resList.add(department.getStaff().get(i));
-                    break;
+        private List<Employee> getEmployeesByIndexesExceptOf(Department department, int[] indexes) {
+            List<Employee> resList = new ArrayList<>();
+            outer:
+            for (int i = 0; i < department.getStaff().size(); i++) {
+                for (int j : indexes) {
+                    if (i == j) {
+                        continue outer;
+                    }
                 }
+                resList.add(department.getStaff().get(i));
+            }
+            return resList;
+        }
+    }
+
+    class BufferedWriterWrap {
+        private BufferedWriter bw;
+
+        public BufferedWriterWrap(String filename) {
+            try {
+                bw = new BufferedWriter(new FileWriter(filename));
+            } catch (IOException e) {
+                System.err.println("[ERROR] Failed to open/create output file");
             }
         }
-        return resList;
-    }
 
-    private List<Employee> getEmployeesByIndexesExceptOf(Department department, int[] indexes) {
-        List<Employee> resList = new ArrayList<>();
-        outer:
-        for (int i = 0; i < department.getStaff().size(); i++) {
-            for (int j : indexes) {
-                if (i == j) {
-                    continue outer;
+        public void write(String msg) {
+            try {
+                bw.write(msg);
+            } catch (IOException e) {
+                System.err.println("[ERROR] Failed writing to output file");
+            }
+        }
+
+        public void close() {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException e) {
+                    System.err.println("[ERROR] Failed closing output file");
                 }
             }
-            resList.add(department.getStaff().get(i));
-        }
-        return resList;
-    }
-
-    private void writeToFile(String optionalMsg, String msg) {
-        try {
-            bw.write(optionalMsg + msg);
-        } catch (IOException e) {
-            // log here?
         }
     }
 }

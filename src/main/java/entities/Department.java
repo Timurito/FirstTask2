@@ -33,7 +33,7 @@ public class Department {
         for (Employee e : getStaff()) {
             avgSalary = avgSalary.add(e.getSalary());
         }
-        return avgSalary.divide(new BigDecimal(staff.size()), RoundingMode.HALF_EVEN);
+        return avgSalary.divide(new BigDecimal(getStaff().size()), RoundingMode.HALF_EVEN);
     }
 
     @Override

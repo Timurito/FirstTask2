@@ -1,41 +1,29 @@
 Reading file...
 Successfully read info:
-Department: DEV
-Average salary of department: 700
-Employee: Иванов И.И., 1000
-Employee: Сидоров И.И., 1000
-Employee: Путин И.И., 100
+Department: БУХГАЛТЕРИЯ
+Average salary of department: 222.222
+Employee: Коля, 111.111
+Employee: Эвелина, 222.222
+Employee: Кирилл, 333.333
 
-Department: TEST
-Average salary of department: 70
-Employee: Петров И.И., 80
-Employee: Блинов И.И., 120
-Employee: Птрв И.И., 10
+Department: КАДРЫ
+Average salary of department: 123.123
+Employee: Ира, 123.123
+Employee: Юля, 123.123
+Employee: Петр, 123.123
+
+Department: IT
+Average salary of department: 321.321
+Employee: John, 321.321
+Employee: Tim, 321.321
+Employee: Ken, 321.321
 
 ________________________________________________________
 Found combination 1
-Combination of DEV and TEST
-Staff from DEV:
-Employee: Путин И.И., 100
-Staff from TEST:
-DEV <original average salary> - <new average salary>: 700 - 1000
-TEST <original average salary> - <new average salary>: 70 - 78
-
-Found combination 2
-Combination of DEV and TEST
-Staff from DEV:
-Employee: Иванов И.И., 1000
-Employee: Путин И.И., 100
-Staff from TEST:
-DEV <original average salary> - <new average salary>: 700 - 1000
-TEST <original average salary> - <new average salary>: 70 - 262
-
-Found combination 3
-Combination of DEV and TEST
-Staff from DEV:
-Employee: Сидоров И.И., 1000
-Employee: Путин И.И., 100
-Staff from TEST:
-DEV <original average salary> - <new average salary>: 700 - 1000
-TEST <original average salary> - <new average salary>: 70 - 262
+Combination of БУХГАЛТЕРИЯ and КАДРЫ
+Staff from БУХГАЛТЕРИЯ:
+Employee: Коля, 111.111
+Employee: Эвелина, 222.222
+БУХГАЛТЕРИЯ <original average salary> - <new average salary>: 222.222 - 333.333
+КАДРЫ <original average salary> - <new average salary>: 123.123 - 140.540
 
