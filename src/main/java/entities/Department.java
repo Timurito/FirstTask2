@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static main.Constants.SCALE;
+
 public class Department {
     private String name;
     private List<Employee> staff;
@@ -33,7 +35,7 @@ public class Department {
         for (Employee e : getStaff()) {
             avgSalary = avgSalary.add(e.getSalary());
         }
-        return avgSalary.divide(new BigDecimal(getStaff().size()), 5, RoundingMode.HALF_EVEN);
+        return avgSalary.divide(new BigDecimal(getStaff().size()), SCALE, RoundingMode.HALF_EVEN);
     }
 
     @Override

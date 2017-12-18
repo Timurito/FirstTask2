@@ -14,11 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static main.Constants.*;
+
 public class TaskProcess {
-    private static final int DEPARTMENT_NAME = 0;
-    private static final int EMPLOYEE_FULL_NAME = 1;
-    private static final int EMPLOYEE_SALARY = 2;
-    private static final int STRING_PARTS_NUM = 3;
     private int totalFoundCombs;
     private BufferedWriterWrap bw;
     private List<Department> departments = new ArrayList<>();
@@ -144,12 +142,12 @@ public class TaskProcess {
             for (Employee e : dep1NewStaff) {
                 dep1NewAvgSalary = dep1NewAvgSalary.add(e.getSalary());
             }
-            dep1NewAvgSalary = dep1NewAvgSalary.divide(new BigDecimal(dep1NewStaff.size()), 5, RoundingMode.HALF_EVEN);
+            dep1NewAvgSalary = dep1NewAvgSalary.divide(new BigDecimal(dep1NewStaff.size()), SCALE, RoundingMode.HALF_EVEN);
             BigDecimal dep2NewAvgSalary = new BigDecimal(0);
             for (Employee e : dep2NewStaff) {
                 dep2NewAvgSalary = dep2NewAvgSalary.add(e.getSalary());
             }
-            dep2NewAvgSalary = dep2NewAvgSalary.divide(new BigDecimal(dep2NewStaff.size()), 5, RoundingMode.HALF_EVEN);
+            dep2NewAvgSalary = dep2NewAvgSalary.divide(new BigDecimal(dep2NewStaff.size()), SCALE, RoundingMode.HALF_EVEN);
             BigDecimal dep1OrigAvgSalary = department1.getAvgSalary();
             BigDecimal dep2OrigAvgSalary = department2.getAvgSalary();
             if (dep1OrigAvgSalary.compareTo(dep1NewAvgSalary) == -1 && dep2OrigAvgSalary.compareTo(dep2NewAvgSalary) == -1) {
