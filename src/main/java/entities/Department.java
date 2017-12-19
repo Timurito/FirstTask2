@@ -31,11 +31,19 @@ public class Department {
     }
 
     public BigDecimal getAvgSalary() {
-        BigDecimal avgSalary = new BigDecimal(0);
+        return getSumSalary().divide(new BigDecimal(getStaff().size()), SCALE, RoundingMode.HALF_EVEN);
+    }
+
+    public BigDecimal getSumSalary() {
+        BigDecimal sumSalary = new BigDecimal(0);
         for (Employee e : getStaff()) {
-            avgSalary = avgSalary.add(e.getSalary());
+            sumSalary = sumSalary.add(e.getSalary());
         }
-        return avgSalary.divide(new BigDecimal(getStaff().size()), SCALE, RoundingMode.HALF_EVEN);
+        return sumSalary;
+    }
+
+    public int getStaffSize() {
+        return getStaff().size();
     }
 
     @Override

@@ -86,7 +86,7 @@ public class TaskProcess {
         try {
             salary = (BigDecimal) decimalFormat.parse(str);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.err.println("[ERROR] Failed to parse employee's salary");
             return null;
         }
         return salary.signum() >= 0 ? salary : null;
@@ -134,26 +134,28 @@ public class TaskProcess {
         }
 
         private void compareDepartments(int[] dep1Comb) {
-            List<Employee> dep1NewStaff = getEmployeesByIndexesExceptOf(department1, dep1Comb);
             List<Employee> dep1StaffByIndexes = getEmployeesByIndexes(department1, dep1Comb);
-            List<Employee> dep2NewStaff = new ArrayList<>(dep1StaffByIndexes);
-            dep2NewStaff.addAll(department2.getStaff());
-            BigDecimal dep1NewAvgSalary = new BigDecimal(0);
-            for (Employee e : dep1NewStaff) {
-                dep1NewAvgSalary = dep1NewAvgSalary.add(e.getSalary());
+            BigDecimal dep1NewAvgSalary = department1.getSumSalary();
+            for (Employee e : dep1StaffByIndexes) {
+                dep1NewAvgSalary = dep1NewAvgSalary.subtract(e.getSalary());
             }
-            dep1NewAvgSalary = dep1NewAvgSalary.divide(new BigDecimal(dep1NewStaff.size()), SCALE, RoundingMode.HALF_EVEN);
-            BigDecimal dep2NewAvgSalary = new BigDecimal(0);
-            for (Employee e : dep2NewStaff) {
+            dep1NewAvgSalary = dep1NewAvgSalary.divide(
+                    new BigDecimal(department1.getStaffSize() - dep1StaffByIndexes.size()),
+                    SCALE, RoundingMode.HALF_EVEN);
+            BigDecimal dep2NewAvgSalary = department2.getSumSalary();
+            for (Employee e : dep1StaffByIndexes) {
                 dep2NewAvgSalary = dep2NewAvgSalary.add(e.getSalary());
             }
-            dep2NewAvgSalary = dep2NewAvgSalary.divide(new BigDecimal(dep2NewStaff.size()), SCALE, RoundingMode.HALF_EVEN);
+            dep2NewAvgSalary = dep2NewAvgSalary.divide(
+                    new BigDecimal(department2.getStaffSize() + dep1StaffByIndexes.size()),
+                    SCALE, RoundingMode.HALF_EVEN);
             BigDecimal dep1OrigAvgSalary = department1.getAvgSalary();
             BigDecimal dep2OrigAvgSalary = department2.getAvgSalary();
             if (dep1OrigAvgSalary.compareTo(dep1NewAvgSalary) == -1 && dep2OrigAvgSalary.compareTo(dep2NewAvgSalary) == -1) {
                 totalFoundCombs++;
                 StringBuilder sb = new StringBuilder("Found combination ").append(totalFoundCombs).append("\n")
-                        .append("Combination of ").append(department1.getName()).append(" and ").append(department2.getName()).append("\n")
+                        .append("Combination of ").append(department1.getName()).append(" and ")
+                        .append(department2.getName()).append("\n")
                         .append("Staff from ").append(department1.getName()).append(":\n");
                 for (Employee e : dep1StaffByIndexes) {
                     sb.append(e).append("\n");
@@ -175,21 +177,6 @@ public class TaskProcess {
                         break;
                     }
                 }
-            }
-            return resList;
-        }
-
-
-        private List<Employee> getEmployeesByIndexesExceptOf(Department department, int[] indexes) {
-            List<Employee> resList = new ArrayList<>();
-            outer:
-            for (int i = 0; i < department.getStaff().size(); i++) {
-                for (int j : indexes) {
-                    if (i == j) {
-                        continue outer;
-                    }
-                }
-                resList.add(department.getStaff().get(i));
             }
             return resList;
         }
